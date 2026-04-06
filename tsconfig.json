@@ -6,9 +6,7 @@
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["./src/*"],
-      "@sudobility/components": ["./src/vendor/components.ts"],
-      "@sudobility/design": ["./src/vendor/design.ts"]
+      "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "isolatedModules": true,

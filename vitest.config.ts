@@ -34,11 +34,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      '@sudobility/components': resolve(
-        __dirname,
-        './src/vendor/components.ts'
-      ),
-      '@sudobility/design': resolve(__dirname, './src/vendor/design.ts'),
     },
   },
 });
