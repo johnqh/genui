@@ -221,53 +221,46 @@ const renderCarousel = (
   const children = view.children ?? [];
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full',
-        resolveViewModifierClasses(view.modifier),
-        !view.modifier?.borderColor && 'border-slate-200'
-      )}
-    >
-      <Stack spacing='md'>
-        {titleBlock(view)}
-        <Swiper
-          modules={[EffectCoverflow, Pagination]}
-          effect='coverflow'
-          grabCursor
-          centeredSlides
-          slidesPerView='auto'
-          slideToClickedSlide
-          coverflowEffect={{
-            rotate: 30,
-            stretch: '10%',
-            depth: 100,
-            modifier: 2.5,
-            slideShadows: true,
-          }}
-          pagination={{ clickable: true }}
-          style={{ paddingBottom: '30px', width: '100%' }}
-        >
-          {children.map(child => (
-            <SwiperSlide
-              key={child.id}
-              style={{ width: '80%', maxWidth: '340px' }}
+    <div className='w-full overflow-hidden'>
+      {titleBlock(view) ? <div className='mb-4'>{titleBlock(view)}</div> : null}
+      <Swiper
+        modules={[EffectCoverflow, Pagination]}
+        effect='coverflow'
+        grabCursor
+        centeredSlides
+        slidesPerView='auto'
+        slideToClickedSlide
+        coverflowEffect={{
+          rotate: 30,
+          stretch: '10%',
+          depth: 100,
+          modifier: 2.5,
+          slideShadows: true,
+        }}
+        pagination={{ clickable: true }}
+        style={{ paddingBottom: '30px' }}
+      >
+        {children.map(child => (
+          <SwiperSlide
+            key={child.id}
+            style={{ width: '80%', maxWidth: '340px' }}
+          >
+            <Box
+              p='md'
+              rounded='xl'
+              border
+              shadow='md'
+              className={cn(
+                'border-slate-200',
+                resolveViewModifierClasses(child.view?.modifier)
+              )}
             >
-              <Box
-                p='md'
-                rounded='lg'
-                border
-                className='border-slate-200 h-full'
-              >
-                <RenderNode renderable={child} onAction={onAction} />
-              </Box>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Stack>
-    </Box>
+              <RenderNode renderable={child} onAction={onAction} />
+            </Box>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   );
 };
 
