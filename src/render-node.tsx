@@ -216,6 +216,7 @@ const SWIPER_CRITICAL_CSS = `
 .swiper{overflow:hidden;position:relative}
 .swiper-wrapper{display:flex;position:relative;width:100%;height:100%;z-index:1;transition-property:transform;box-sizing:content-box}
 .swiper-slide{flex-shrink:0;position:relative;transition-property:transform}
+.swiper-3d,.swiper-3d.swiper-css-mode .swiper-wrapper{perspective:1200px}
 .swiper-3d .swiper-wrapper{transform-style:preserve-3d}
 .swiper-3d .swiper-slide{transform-style:preserve-3d}
 .swiper-3d .swiper-slide-shadow-left,.swiper-3d .swiper-slide-shadow-right{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:10}
