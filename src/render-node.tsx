@@ -1,4 +1,9 @@
 import * as React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCoverflow, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
 import {
   Box,
   Button,
@@ -176,9 +181,7 @@ const renderCollection = (
 ) => {
   const isGrid = view.layout?.startsWith('grid');
   const isHorizontal =
-    view.layout === 'stacked_horizontal' ||
-    view.layout === 'spaced_horizontal' ||
-    view.layout === 'carousel';
+    view.layout === 'stacked_horizontal' || view.layout === 'spaced_horizontal';
 
   return (
     <Box
@@ -205,6 +208,57 @@ const renderCollection = (
         >
           {renderChildren(view.children, onAction)}
         </div>
+      </Stack>
+    </Box>
+  );
+};
+
+const renderCarousel = (
+  _renderable: IRenderable,
+  view: IRenderableView,
+  onAction?: GenUIActionHandler
+) => {
+  const children = view.children ?? [];
+
+  return (
+    <Box
+      p='md'
+      rounded='lg'
+      border
+      className={cn(
+        'w-full',
+        resolveViewModifierClasses(view.modifier),
+        !view.modifier?.borderColor && 'border-slate-200'
+      )}
+    >
+      <Stack spacing='md'>
+        {titleBlock(view)}
+        <Swiper
+          modules={[EffectCoverflow, Pagination]}
+          effect='coverflow'
+          grabCursor
+          centeredSlides
+          slidesPerView='auto'
+          slideToClickedSlide
+          coverflowEffect={{
+            rotate: 30,
+            stretch: '10%',
+            depth: 100,
+            modifier: 2.5,
+            slideShadows: true,
+          }}
+          pagination={{ clickable: true }}
+          style={{ paddingBottom: '30px', width: '100%' }}
+        >
+          {children.map(child => (
+            <SwiperSlide
+              key={child.id}
+              style={{ width: '80%', maxWidth: '340px' }}
+            >
+              <RenderNode renderable={child} onAction={onAction} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </Stack>
     </Box>
   );
@@ -792,6 +846,10 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
 
   if (LineLayouts.has(layout)) {
     return renderLine(view);
+  }
+
+  if (layout === 'carousel') {
+    return renderCarousel(renderable, view, onAction);
   }
 
   if (CollectionLayouts.has(layout)) {

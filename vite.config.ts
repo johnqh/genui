@@ -27,6 +27,10 @@ export default defineConfig({
         'react/jsx-runtime',
         '@sudobility/components',
         '@sudobility/design',
+        'swiper',
+        'swiper/react',
+        'swiper/modules',
+        /^swiper\//,
       ],
       output: {
         exports: 'named',
