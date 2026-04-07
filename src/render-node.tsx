@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/pagination';
 import {
   Box,
   Button,
@@ -213,12 +210,40 @@ const renderCollection = (
   );
 };
 
+// Critical Swiper CSS injected inline so the carousel works without
+// the consuming app needing to import swiper/css separately.
+const SWIPER_CRITICAL_CSS = `
+.swiper{overflow:hidden;position:relative}
+.swiper-wrapper{display:flex;position:relative;width:100%;height:100%;z-index:1;transition-property:transform;box-sizing:content-box}
+.swiper-slide{flex-shrink:0;position:relative;transition-property:transform}
+.swiper-3d .swiper-wrapper{transform-style:preserve-3d}
+.swiper-3d .swiper-slide{transform-style:preserve-3d}
+.swiper-3d .swiper-slide-shadow-left,.swiper-3d .swiper-slide-shadow-right{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:10}
+.swiper-3d .swiper-slide-shadow-left{background-image:linear-gradient(to left,rgba(0,0,0,.5),rgba(0,0,0,0))}
+.swiper-3d .swiper-slide-shadow-right{background-image:linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,0))}
+.swiper-pagination{text-align:center;position:absolute;bottom:0;width:100%;z-index:10}
+.swiper-pagination-bullet{width:8px;height:8px;display:inline-block;border-radius:50%;background:#000;opacity:.2;cursor:pointer;margin:0 4px}
+.swiper-pagination-bullet-active{opacity:1;background:#007aff}
+`;
+
+let swiperCssInjected = false;
+
+const ensureSwiperCss = () => {
+  if (swiperCssInjected || typeof document === 'undefined') return;
+  const style = document.createElement('style');
+  style.setAttribute('data-genui-swiper', '');
+  style.textContent = SWIPER_CRITICAL_CSS;
+  document.head.appendChild(style);
+  swiperCssInjected = true;
+};
+
 const renderCarousel = (
   _renderable: IRenderable,
   view: IRenderableView,
   onAction?: GenUIActionHandler
 ) => {
   const children = view.children ?? [];
+  ensureSwiperCss();
 
   return (
     <div className='w-full overflow-hidden'>
@@ -243,7 +268,7 @@ const renderCarousel = (
         {children.map(child => (
           <SwiperSlide
             key={child.id}
-            style={{ width: '80%', maxWidth: '340px' }}
+            style={{ width: '90%', maxWidth: '340px' }}
           >
             <RenderNode renderable={child} onAction={onAction} />
           </SwiperSlide>
