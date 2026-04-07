@@ -264,12 +264,21 @@ const renderCarousel = (
           slideShadows: true,
         }}
         pagination={{ clickable: true }}
-        style={{ paddingBottom: '30px' }}
+        style={{ paddingBottom: '30px', perspective: '1200px' }}
+        onSwiper={swiper => {
+          if (swiper.wrapperEl) {
+            swiper.wrapperEl.style.transformStyle = 'preserve-3d';
+          }
+        }}
       >
         {children.map(child => (
           <SwiperSlide
             key={child.id}
-            style={{ width: '90%', maxWidth: '340px' }}
+            style={{
+              width: '90%',
+              maxWidth: '340px',
+              transformStyle: 'preserve-3d' as const,
+            }}
           >
             <RenderNode renderable={child} onAction={onAction} />
           </SwiperSlide>
