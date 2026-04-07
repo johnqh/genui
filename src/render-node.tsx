@@ -255,7 +255,14 @@ const renderCarousel = (
               key={child.id}
               style={{ width: '80%', maxWidth: '340px' }}
             >
-              <RenderNode renderable={child} onAction={onAction} />
+              <Box
+                p='md'
+                rounded='lg'
+                border
+                className='border-slate-200 h-full'
+              >
+                <RenderNode renderable={child} onAction={onAction} />
+              </Box>
             </SwiperSlide>
           ))}
         </Swiper>
