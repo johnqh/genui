@@ -245,18 +245,7 @@ const renderCarousel = (
             key={child.id}
             style={{ width: '80%', maxWidth: '340px' }}
           >
-            <Box
-              p='md'
-              rounded='xl'
-              border
-              shadow='md'
-              className={cn(
-                'border-slate-200',
-                resolveViewModifierClasses(child.view?.modifier)
-              )}
-            >
-              <RenderNode renderable={child} onAction={onAction} />
-            </Box>
+            <RenderNode renderable={child} onAction={onAction} />
           </SwiperSlide>
         ))}
       </Swiper>
