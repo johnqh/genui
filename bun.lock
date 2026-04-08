@@ -30,8 +30,8 @@
         "vitest": "^3.2.4",
       },
       "peerDependencies": {
-        "@sudobility/components": "^5.0.49",
-        "@sudobility/design": "^1.1.25",
+        "@sudobility/components": "^5.0.50",
+        "@sudobility/design": "^1.1.26",
         "react": ">=18.0.0",
         "react-dom": ">=18.0.0",
         "swiper": "^12.1.3",
