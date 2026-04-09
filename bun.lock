@@ -31,7 +31,7 @@
       },
       "peerDependencies": {
         "@sudobility/components": "^5.0.53",
-        "@sudobility/design": "^1.1.26",
+        "@sudobility/design": "^1.1.27",
         "react": ">=18.0.0",
         "react-dom": ">=18.0.0",
         "swiper": "^12.1.3",
