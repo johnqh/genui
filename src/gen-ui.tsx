@@ -4,21 +4,28 @@ import { cn, ui } from '@sudobility/design';
 import type { GenUIProps } from './types';
 import { RenderNode } from './render-node';
 
+export const GoogleMapsApiKeyContext = React.createContext<string | undefined>(
+  undefined
+);
+
 export const GenUI: React.FC<GenUIProps> = ({
   renderable,
   onAction,
   className,
+  googleMapsApiKey,
 }) => {
   return (
-    <Box
-      as='section'
-      className={cn(
-        ui.background.subtle,
-        'w-full rounded-xl p-4 md:p-6',
-        className
-      )}
-    >
-      <RenderNode renderable={renderable} onAction={onAction} />
-    </Box>
+    <GoogleMapsApiKeyContext.Provider value={googleMapsApiKey}>
+      <Box
+        as='section'
+        className={cn(
+          ui.background.subtle,
+          'w-full rounded-xl p-4 md:p-6',
+          className
+        )}
+      >
+        <RenderNode renderable={renderable} onAction={onAction} />
+      </Box>
+    </GoogleMapsApiKeyContext.Provider>
   );
 };

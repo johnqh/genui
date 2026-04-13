@@ -100,6 +100,7 @@ export const ViewLayout = {
   GRID_SECTIONED: 'grid_sectioned',
   CAROUSAL: 'carousel',
   MAP: 'map',
+  MAP_PIN: 'map_pin',
   STACKED: 'stacked',
   STACKED_HORIZONTAL: 'stacked_horizontal',
   STACKED_VERTICAL: 'stacked_vertical',
@@ -177,6 +178,11 @@ export interface IRenderableUrl {
   url: string;
 }
 
+export interface IRenderableLocation {
+  lat: number;
+  long: number;
+}
+
 export interface IRenderableViewModifier {
   bgColor?: ThemeColor | null;
   borderColor?: ThemeColor | null;
@@ -230,6 +236,7 @@ export interface IRenderable {
   id: string;
   view?: IRenderableView | null;
   destination?: IRenderableAction | IRenderableScreen | null;
+  location?: IRenderableLocation | null;
   final?: boolean;
   parent?: IRenderable | null;
 }
@@ -243,4 +250,5 @@ export interface GenUIProps {
   renderable: IRenderable;
   onAction?: GenUIActionHandler;
   className?: string;
+  googleMapsApiKey?: string;
 }

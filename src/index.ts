@@ -8,6 +8,7 @@ export type {
   IRenderableImageModifier,
   IRenderableLabel,
   IRenderableLabelModifier,
+  IRenderableLocation,
   IRenderableScreen,
   IRenderableScreenModifier,
   IRenderableUrl,

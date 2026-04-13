@@ -2,6 +2,14 @@ import * as React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination } from 'swiper/modules';
 import {
+  APIProvider,
+  Map as GoogleMap,
+  AdvancedMarker,
+  InfoWindow,
+  useMap,
+} from '@vis.gl/react-google-maps';
+import { GoogleMapsApiKeyContext } from './gen-ui';
+import {
   Box,
   Button,
   HStack,
@@ -120,7 +128,6 @@ const CollectionLayouts = new Set([
   'grid_simple',
   'grid_sectioned',
   'carousel',
-  'map',
   'calendar',
   'stacked',
   'stacked_horizontal',
@@ -285,6 +292,270 @@ const renderCarousel = (
         ))}
       </Swiper>
     </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Map (Google Maps via @vis.gl/react-google-maps)
+// ---------------------------------------------------------------------------
+
+const FitBounds: React.FC<{
+  locations: { lat: number; lng: number }[];
+}> = ({ locations }) => {
+  const map = useMap();
+  React.useEffect(() => {
+    if (!map || locations.length < 2) return;
+    // eslint-disable-next-line no-undef
+    const bounds = new google.maps.LatLngBounds();
+    locations.forEach(loc => bounds.extend(loc));
+    map.fitBounds(bounds, 50);
+  }, [map, locations]);
+  return null;
+};
+
+const MapPinMarker: React.FC<{
+  position: { lat: number; lng: number };
+  title?: string;
+  subtitle?: string;
+  details?: string;
+}> = ({ position, title, subtitle, details }) => {
+  const [open, setOpen] = React.useState(false);
+  const hasInfo = !!(subtitle || details);
+
+  return (
+    <AdvancedMarker
+      position={position}
+      title={title}
+      onClick={hasInfo ? () => setOpen(o => !o) : undefined}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          transform: 'translateY(-50%)',
+        }}
+      >
+        <svg
+          width='25'
+          height='41'
+          viewBox='0 0 25 41'
+          style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.4))' }}
+        >
+          <path
+            d='M12.5 0C5.6 0 0 5.6 0 12.5 0 21.875 12.5 41 12.5 41S25 21.875 25 12.5C25 5.6 19.4 0 12.5 0z'
+            fill='#e74c3c'
+            stroke='#c0392b'
+            strokeWidth='1'
+          />
+          <circle cx='12.5' cy='12.5' r='5' fill='#fff' />
+        </svg>
+        {title ? (
+          <span
+            style={{
+              marginTop: 2,
+              padding: '2px 6px',
+              background: '#fff',
+              borderRadius: 4,
+              fontSize: 11,
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+              color: '#333',
+            }}
+          >
+            {title}
+          </span>
+        ) : null}
+      </div>
+      {hasInfo && open ? (
+        <InfoWindow onCloseClick={() => setOpen(false)}>
+          <div>
+            {subtitle ? <div>{subtitle}</div> : null}
+            {details ? <div>{details}</div> : null}
+          </div>
+        </InfoWindow>
+      ) : null}
+    </AdvancedMarker>
+  );
+};
+
+const MapPinNode: React.FC<{
+  renderable: IRenderable;
+  view: IRenderableView;
+}> = ({ renderable, view }) => {
+  const apiKey = React.useContext(GoogleMapsApiKeyContext);
+  const loc = renderable.location;
+  if (!loc || !apiKey) return null;
+
+  const title = labelText(view.title);
+
+  return (
+    <Box
+      p='md'
+      rounded='lg'
+      border
+      className={cn(
+        'w-full',
+        resolveViewModifierClasses(view.modifier),
+        !view.modifier?.borderColor && 'border-slate-200'
+      )}
+    >
+      <Stack spacing='md'>
+        {titleBlock(view)}
+        <div
+          className='overflow-hidden rounded-lg'
+          style={{ height: view.modifier?.height ?? 300 }}
+        >
+          <APIProvider apiKey={apiKey}>
+            <GoogleMap
+              defaultCenter={{ lat: loc.lat, lng: loc.long }}
+              defaultZoom={13}
+              gestureHandling='greedy'
+              mapId='genui-map'
+            >
+              <MapPinMarker
+                position={{ lat: loc.lat, lng: loc.long }}
+                title={title}
+                subtitle={view.subtitle?.text ?? undefined}
+                details={view.details?.text ?? undefined}
+              />
+            </GoogleMap>
+          </APIProvider>
+        </div>
+      </Stack>
+    </Box>
+  );
+};
+
+const MapNode: React.FC<{
+  renderable: IRenderable;
+  view: IRenderableView;
+  onAction?: GenUIActionHandler;
+}> = ({ renderable: _renderable, view, onAction }) => {
+  const apiKey = React.useContext(GoogleMapsApiKeyContext);
+  const children = view.children ?? [];
+  const locatedChildren = children.filter(c => c.location);
+
+  if (!apiKey || locatedChildren.length === 0) {
+    return (
+      <Box p='md' rounded='lg' border className='w-full border-slate-200'>
+        <Stack spacing='md'>
+          {titleBlock(view)}
+          <Text as='div' size='sm' color='muted'>
+            {!apiKey
+              ? 'Google Maps API key not provided.'
+              : 'No locations to display.'}
+          </Text>
+        </Stack>
+      </Box>
+    );
+  }
+
+  const lats = locatedChildren.map(c => c.location!.lat);
+  const lngs = locatedChildren.map(c => c.location!.long);
+  const centerLat = (Math.min(...lats) + Math.max(...lats)) / 2;
+  const centerLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
+
+  const locations = locatedChildren.map(c => ({
+    lat: c.location!.lat,
+    lng: c.location!.long,
+  }));
+
+  return (
+    <Box
+      p='md'
+      rounded='lg'
+      border
+      className={cn(
+        'w-full',
+        resolveViewModifierClasses(view.modifier),
+        !view.modifier?.borderColor && 'border-slate-200'
+      )}
+    >
+      <Stack spacing='md'>
+        {titleBlock(view)}
+        <div
+          className='overflow-hidden rounded-lg'
+          style={{ height: view.modifier?.height ?? 400 }}
+        >
+          <APIProvider apiKey={apiKey}>
+            <GoogleMap
+              defaultCenter={{ lat: centerLat, lng: centerLng }}
+              defaultZoom={5}
+              gestureHandling='greedy'
+              mapId='genui-map'
+            >
+              <FitBounds locations={locations} />
+              {locatedChildren.map(child => {
+                const childView = child.view;
+                const pinTitle = labelText(childView?.title);
+                const value = actionValueOf(child);
+
+                return (
+                  <AdvancedMarker
+                    key={child.id}
+                    position={{
+                      lat: child.location!.lat,
+                      lng: child.location!.long,
+                    }}
+                    title={pinTitle}
+                    onClick={
+                      onAction && value !== undefined
+                        ? () => onAction(value, child)
+                        : undefined
+                    }
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        transform: 'translateY(-50%)',
+                      }}
+                    >
+                      <svg
+                        width='25'
+                        height='41'
+                        viewBox='0 0 25 41'
+                        style={{
+                          filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.4))',
+                        }}
+                      >
+                        <path
+                          d='M12.5 0C5.6 0 0 5.6 0 12.5 0 21.875 12.5 41 12.5 41S25 21.875 25 12.5C25 5.6 19.4 0 12.5 0z'
+                          fill='#e74c3c'
+                          stroke='#c0392b'
+                          strokeWidth='1'
+                        />
+                        <circle cx='12.5' cy='12.5' r='5' fill='#fff' />
+                      </svg>
+                      {pinTitle ? (
+                        <span
+                          style={{
+                            marginTop: 2,
+                            padding: '2px 6px',
+                            background: '#fff',
+                            borderRadius: 4,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+                            color: '#333',
+                          }}
+                        >
+                          {pinTitle}
+                        </span>
+                      ) : null}
+                    </div>
+                  </AdvancedMarker>
+                );
+              })}
+            </GoogleMap>
+          </APIProvider>
+        </div>
+      </Stack>
+    </Box>
   );
 };
 
@@ -870,6 +1141,14 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
 
   if (LineLayouts.has(layout)) {
     return renderLine(view);
+  }
+
+  if (layout === 'map_pin') {
+    return <MapPinNode renderable={renderable} view={view} />;
+  }
+
+  if (layout === 'map') {
+    return <MapNode renderable={renderable} view={view} onAction={onAction} />;
   }
 
   if (layout === 'carousel') {
