@@ -124,6 +124,6 @@ describe('GenUI', () => {
     fireEvent.click(screen.getByRole('combobox'));
     fireEvent.click(screen.getByText('High'));
 
-    expect(onAction).toHaveBeenCalledWith('high', renderable);
+    expect(onAction).toHaveBeenCalledWith('High', renderable);
   });
 });

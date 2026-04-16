@@ -739,13 +739,26 @@ const SelectNode: React.FC<InteractiveNodeProps> = ({
   onAction,
 }) => {
   const options = view.children ?? [];
+  const labelByValue = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const option of options) {
+      const optionView = option.view;
+      const optionValue =
+        actionValueOf(option) ?? optionView?.valueText?.text ?? option.id;
+      const optionLabel =
+        optionView?.title?.text ?? optionView?.valueText?.text ?? option.id;
+      map[optionValue] = optionLabel;
+    }
+    return map;
+  }, [options]);
+
   const defaultValue =
     view.valueText?.text ??
     actionValueOf(options[0] ?? { id: '', destination: null, view: null });
 
   React.useEffect(() => {
     if (defaultValue) {
-      onAction?.(defaultValue, renderable);
+      onAction?.(labelByValue[defaultValue] ?? defaultValue, renderable);
     }
   }, []);
 
@@ -755,7 +768,9 @@ const SelectNode: React.FC<InteractiveNodeProps> = ({
         {titleBlock(view)}
         <Select
           defaultValue={defaultValue}
-          onValueChange={value => onAction?.(value, renderable)}
+          onValueChange={value =>
+            onAction?.(labelByValue[value] ?? value, renderable)
+          }
         >
           <SelectTrigger aria-label={labelText(view.title) || renderable.id}>
             <SelectValue placeholder='Select an option' />
