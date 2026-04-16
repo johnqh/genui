@@ -649,11 +649,6 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
             onChange={event => emit(event.target.value)}
           />
         )}
-        {helper ? (
-          <Text as='span' size='sm' color='muted'>
-            {helper}
-          </Text>
-        ) : null}
       </Stack>
     </div>
   );
