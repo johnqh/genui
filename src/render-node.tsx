@@ -609,9 +609,16 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   view,
   onAction,
 }) => {
-  const [value, setValue] = React.useState(view.valueText?.text ?? '');
+  const initialValue = view.valueText?.text ?? '';
+  const [value, setValue] = React.useState(initialValue);
   const title = labelText(view.title);
   const helper = labelText(view.subtitle);
+
+  React.useEffect(() => {
+    if (initialValue) {
+      onAction?.(initialValue, renderable);
+    }
+  }, []);
 
   const emit = (nextValue: string) => {
     setValue(nextValue);
