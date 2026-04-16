@@ -10,7 +10,6 @@ import {
 } from '@vis.gl/react-google-maps';
 import { GoogleMapsApiKeyContext } from './gen-ui';
 import {
-  Box,
   Button,
   HStack,
   Input,
@@ -184,20 +183,12 @@ const renderCollection = (
   onAction?: GenUIActionHandler
 ) => {
   const isGrid = view.layout?.startsWith('grid');
+  const isList = view.layout?.startsWith('list');
   const isHorizontal =
     view.layout === 'stacked_horizontal' || view.layout === 'spaced_horizontal';
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full',
-        resolveViewModifierClasses(view.modifier),
-        !view.modifier?.borderColor && 'border-slate-200'
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='md'>
         {titleBlock(view)}
         <div
@@ -206,14 +197,25 @@ const renderCollection = (
               ? 'grid grid-cols-1 gap-4 md:grid-cols-2'
               : isHorizontal
                 ? 'flex flex-nowrap gap-4 overflow-x-auto'
-                : 'flex flex-col gap-4'
+                : isList
+                  ? 'flex flex-col'
+                  : 'flex flex-col gap-4'
           )}
           style={resolveDimensionStyle(view.modifier)}
         >
-          {renderChildren(view.children, onAction)}
+          {isGrid
+            ? (view.children ?? []).map(child => (
+                <div
+                  key={child.id}
+                  className='aspect-[4/3] overflow-hidden lg:aspect-video'
+                >
+                  <RenderNode renderable={child} onAction={onAction} />
+                </div>
+              ))
+            : renderChildren(view.children, onAction)}
         </div>
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -264,7 +266,7 @@ const renderCarousel = (
         slidesPerView='auto'
         slideToClickedSlide
         coverflowEffect={{
-          rotate: 30,
+          rotate: -30,
           stretch: '10%',
           depth: 100,
           modifier: 2.5,
@@ -287,7 +289,9 @@ const renderCarousel = (
               transformStyle: 'preserve-3d' as const,
             }}
           >
-            <RenderNode renderable={child} onAction={onAction} />
+            <div className='w-full'>
+              <RenderNode renderable={child} onAction={onAction} />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
@@ -391,16 +395,7 @@ const MapPinNode: React.FC<{
   const title = labelText(view.title);
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full',
-        resolveViewModifierClasses(view.modifier),
-        !view.modifier?.borderColor && 'border-slate-200'
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='md'>
         {titleBlock(view)}
         <div
@@ -424,7 +419,7 @@ const MapPinNode: React.FC<{
           </APIProvider>
         </div>
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -439,7 +434,7 @@ const MapNode: React.FC<{
 
   if (!apiKey || locatedChildren.length === 0) {
     return (
-      <Box p='md' rounded='lg' border className='w-full border-slate-200'>
+      <div className='w-full'>
         <Stack spacing='md'>
           {titleBlock(view)}
           <Text as='div' size='sm' color='muted'>
@@ -448,7 +443,7 @@ const MapNode: React.FC<{
               : 'No locations to display.'}
           </Text>
         </Stack>
-      </Box>
+      </div>
     );
   }
 
@@ -463,16 +458,7 @@ const MapNode: React.FC<{
   }));
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full',
-        resolveViewModifierClasses(view.modifier),
-        !view.modifier?.borderColor && 'border-slate-200'
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='md'>
         {titleBlock(view)}
         <div
@@ -555,7 +541,7 @@ const MapNode: React.FC<{
           </APIProvider>
         </div>
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -572,9 +558,10 @@ const renderAction = (
     <Button
       type='button'
       variant='secondary'
+      animation='none'
       disabled={disabled}
       className={cn(
-        'w-full justify-start',
+        'justify-start',
         resolveViewModifierClasses(view.buttonModifier ?? view.modifier)
       )}
       onClick={() => {
@@ -632,16 +619,7 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   };
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full',
-        resolveViewModifierClasses(view.modifier),
-        !view.modifier?.borderColor && 'border-slate-200'
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='sm'>
         {title ? (
           <Text
@@ -677,7 +655,7 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
           </Text>
         ) : null}
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -691,15 +669,7 @@ const renderToggle = (
   );
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full border-slate-200',
-        resolveViewModifierClasses(view.modifier)
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <HStack justify='between' align='center' full>
         {titleBlock(view)}
         <Switch
@@ -709,7 +679,7 @@ const renderToggle = (
           }
         />
       </HStack>
-    </Box>
+    </div>
   );
 };
 
@@ -724,15 +694,7 @@ const SliderNode: React.FC<InteractiveNodeProps> = ({
   );
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full border-slate-200',
-        resolveViewModifierClasses(view.modifier)
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='sm'>
         <HStack justify='between' align='center'>
           {titleBlock(view)}
@@ -752,7 +714,7 @@ const SliderNode: React.FC<InteractiveNodeProps> = ({
           className='w-full accent-blue-600'
         />
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -767,15 +729,7 @@ const renderSelect = (
     actionValueOf(options[0] ?? { id: '', destination: null, view: null });
 
   return (
-    <Box
-      p='md'
-      rounded='lg'
-      border
-      className={cn(
-        'w-full border-slate-200',
-        resolveViewModifierClasses(view.modifier)
-      )}
-    >
+    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <Stack spacing='sm'>
         {titleBlock(view)}
         <Select
@@ -806,7 +760,7 @@ const renderSelect = (
           </SelectContent>
         </Select>
       </Stack>
-    </Box>
+    </div>
   );
 };
 
@@ -847,7 +801,7 @@ const renderWeb = (view: IRenderableView) => {
       src={url}
       title={labelText(view.title) || 'Embedded content'}
       className={cn(
-        'w-full rounded-lg border border-slate-200',
+        'w-full rounded-lg',
         resolveViewModifierClasses(view.modifier)
       )}
       style={{
@@ -895,7 +849,7 @@ const renderJustImage = (view: IRenderableView) => {
       src={src}
       alt={labelText(view.title) || ''}
       className={cn(
-        'rounded-lg object-cover',
+        'h-full w-full object-cover',
         resolveViewModifierClasses(view.modifier)
       )}
       style={{
@@ -1068,7 +1022,6 @@ const renderBasicCard = (
 ) => (
   <div
     className={cn(
-      'w-full rounded-lg border border-slate-200 p-4',
       'w-full',
       ui.background.surface,
       resolveViewModifierClasses(view.modifier)

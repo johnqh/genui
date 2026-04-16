@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Box } from '@sudobility/components';
-import { cn, ui } from '@sudobility/design';
+import { cn } from '@sudobility/design';
 import type { GenUIProps } from './types';
 import { RenderNode } from './render-node';
 
@@ -16,16 +15,9 @@ export const GenUI: React.FC<GenUIProps> = ({
 }) => {
   return (
     <GoogleMapsApiKeyContext.Provider value={googleMapsApiKey}>
-      <Box
-        as='section'
-        className={cn(
-          ui.background.subtle,
-          'w-full rounded-xl p-4 md:p-6',
-          className
-        )}
-      >
+      <div className={cn('w-full', className)}>
         <RenderNode renderable={renderable} onAction={onAction} />
-      </Box>
+      </div>
     </GoogleMapsApiKeyContext.Provider>
   );
 };
