@@ -266,7 +266,7 @@ const renderCarousel = (
         slidesPerView='auto'
         slideToClickedSlide
         coverflowEffect={{
-          rotate: -30,
+          rotate: 30,
           stretch: '10%',
           depth: 100,
           modifier: 2.5,
