@@ -101,42 +101,6 @@ const backgroundColorMap: Record<string, string> = {
   DARK_GRAY: 'bg-slate-700',
 };
 
-const borderColorMap: Record<string, string> = {
-  SEPARATOR: 'border-slate-200',
-  SEPARATOR_OPAQUE: 'border-slate-300',
-  ACTION_BORDER: 'border-blue-600',
-  ACTION_BORDER_SECONDARY: 'border-slate-200',
-  ACTION_BORDER_DESTRUCTIVE: 'border-rose-600',
-  SELECTED: 'border-blue-600',
-  SUCCESS: 'border-emerald-600',
-  WARNING: 'border-amber-500',
-  WARNING_SECONDARY: 'border-amber-400',
-  ERROR: 'border-rose-600',
-  DISABLED: 'border-slate-300',
-  SYSTEM_BLUE: 'border-blue-500',
-  SYSTEM_BROWN: 'border-amber-700',
-  SYSTEM_CYAN: 'border-cyan-500',
-  SYSTEM_GRAY: 'border-gray-500',
-  SYSTEM_GRAY2: 'border-gray-400',
-  SYSTEM_GRAY3: 'border-slate-400',
-  SYSTEM_GRAY4: 'border-slate-300',
-  SYSTEM_GRAY5: 'border-slate-200',
-  SYSTEM_GRAY6: 'border-slate-100',
-  SYSTEM_GREEN: 'border-green-500',
-  SYSTEM_INDIGO: 'border-indigo-500',
-  SYSTEM_LIME: 'border-lime-500',
-  SYSTEM_MINT: 'border-emerald-400',
-  SYSTEM_ORANGE: 'border-orange-500',
-  SYSTEM_PINK: 'border-pink-500',
-  SYSTEM_PURPLE: 'border-purple-500',
-  SYSTEM_RED: 'border-red-500',
-  SYSTEM_TEAL: 'border-teal-500',
-  SYSTEM_YELLOW: 'border-yellow-500',
-  LABEL_SECONDARY: 'border-slate-300',
-  LIGHT_GRAY: 'border-slate-200',
-  DARK_GRAY: 'border-slate-700',
-};
-
 const fontWeightMap: Record<FontWeight, string> = {
   TITLE: 'font-semibold',
   SUBTITLE: 'font-medium',
@@ -176,10 +140,6 @@ export const resolveViewModifierClasses = (
 
   if (modifier.bgColor) {
     classes.push(backgroundColorMap[modifier.bgColor] ?? '');
-  }
-
-  if (modifier.borderColor) {
-    classes.push('border', borderColorMap[modifier.borderColor] ?? '');
   }
 
   return classes.filter(Boolean).join(' ');

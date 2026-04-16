@@ -23,7 +23,7 @@ import {
   Text,
   TextArea,
 } from '@sudobility/components';
-import { cn, ui } from '@sudobility/design';
+import { cn } from '@sudobility/design';
 import type { GenUIActionHandler, IRenderable, IRenderableView } from './types';
 import {
   actionValueOf,
@@ -399,7 +399,7 @@ const MapPinNode: React.FC<{
       <Stack spacing='md'>
         {titleBlock(view)}
         <div
-          className='overflow-hidden rounded-lg'
+          className='overflow-hidden'
           style={{ height: view.modifier?.height ?? 300 }}
         >
           <APIProvider apiKey={apiKey}>
@@ -462,7 +462,7 @@ const MapNode: React.FC<{
       <Stack spacing='md'>
         {titleBlock(view)}
         <div
-          className='overflow-hidden rounded-lg'
+          className='overflow-hidden'
           style={{ height: view.modifier?.height ?? 400 }}
         >
           <APIProvider apiKey={apiKey}>
@@ -777,7 +777,7 @@ const renderSpacer = (view: IRenderableView) => (
 const renderWaiting = (view: IRenderableView) => (
   <div
     className={cn(
-      'flex w-full items-center justify-center py-8',
+      'flex w-full items-center justify-center',
       resolveViewModifierClasses(view.modifier)
     )}
   >
@@ -800,10 +800,7 @@ const renderWeb = (view: IRenderableView) => {
     <iframe
       src={url}
       title={labelText(view.title) || 'Embedded content'}
-      className={cn(
-        'w-full rounded-lg',
-        resolveViewModifierClasses(view.modifier)
-      )}
+      className={cn('w-full', resolveViewModifierClasses(view.modifier))}
       style={{
         height: view.modifier?.height ?? 400,
         width: view.modifier?.width ?? undefined,
@@ -815,7 +812,7 @@ const renderWeb = (view: IRenderableView) => {
 const renderCenter = (view: IRenderableView, onAction?: GenUIActionHandler) => (
   <div
     className={cn(
-      'flex w-full flex-col items-center justify-center gap-2 py-4 text-center',
+      'flex w-full flex-col items-center justify-center gap-2 text-center',
       resolveViewModifierClasses(view.modifier)
     )}
     style={resolveDimensionStyle(view.modifier)}
@@ -875,7 +872,7 @@ const renderEmbeddedImage = (
         <img
           src={src}
           alt={labelText(view.title) || ''}
-          className='mb-2 w-full rounded-lg object-cover'
+          className='mb-2 w-full object-cover'
         />
       ) : null}
       {titleBlock(view)}
@@ -928,7 +925,7 @@ const renderFooter = (view: IRenderableView) => {
 
   return (
     <div
-      className={cn('w-full py-2', resolveViewModifierClasses(view.modifier))}
+      className={cn('w-full', resolveViewModifierClasses(view.modifier))}
       style={resolveDimensionStyle(view.modifier)}
     >
       <Text
@@ -953,7 +950,7 @@ const renderLine = (view: IRenderableView) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-3 py-2',
+        'flex items-center gap-3',
         resolveViewModifierClasses(view.modifier)
       )}
       style={resolveDimensionStyle(view.modifier)}
@@ -1021,11 +1018,7 @@ const renderBasicCard = (
   onAction?: GenUIActionHandler
 ) => (
   <div
-    className={cn(
-      'w-full',
-      ui.background.surface,
-      resolveViewModifierClasses(view.modifier)
-    )}
+    className={cn('w-full', resolveViewModifierClasses(view.modifier))}
     style={resolveDimensionStyle(view.modifier)}
   >
     <HStack align='start' spacing='sm'>
