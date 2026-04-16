@@ -269,7 +269,14 @@ const renderCarousel = (
           rotate: 30,
           stretch: '10%',
           depth: 100,
-          modifier: 2.5,
+          // Function modifier: strong effect for adjacent slides (75°),
+          // clamped so outer slides never flip past ~81°
+          modifier: ((offset: number) => {
+            const value = offset * 2.5;
+            const cap = 2.7;
+            if (Math.abs(value) <= cap) return value;
+            return Math.sign(value) * cap;
+          }) as unknown as number,
           slideShadows: true,
         }}
         pagination={{ clickable: true }}
@@ -289,7 +296,7 @@ const renderCarousel = (
               transformStyle: 'preserve-3d' as const,
             }}
           >
-            <div className='w-full'>
+            <div className='flex w-full flex-col'>
               <RenderNode renderable={child} onAction={onAction} />
             </div>
           </SwiperSlide>
