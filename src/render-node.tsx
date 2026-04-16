@@ -621,7 +621,7 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   return (
     <div
       className={cn(
-        'w-full rounded-lg bg-gray-100 p-3 dark:bg-gray-800',
+        'w-full rounded-lg bg-gray-200 p-3 dark:bg-gray-700',
         resolveViewModifierClasses(view.modifier)
       )}
     >
