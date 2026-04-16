@@ -145,7 +145,6 @@ const ActionLayouts = new Set([
   'fab',
   'fab_mini',
   'fab_extended',
-  'link',
   'nav_item',
   'nav_image_item',
   'tile',
@@ -542,6 +541,37 @@ const MapNode: React.FC<{
         </div>
       </Stack>
     </div>
+  );
+};
+
+const renderLink = (view: IRenderableView) => {
+  const url = view.url?.url;
+  const title = labelText(view.title);
+
+  if (!url && !title) {
+    return null;
+  }
+
+  return url ? (
+    <a
+      href={url}
+      target='_blank'
+      rel='noopener noreferrer'
+      className={cn(
+        'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline text-sm',
+        resolveViewModifierClasses(view.modifier)
+      )}
+    >
+      {title || url}
+    </a>
+  ) : (
+    <Text
+      as='span'
+      size='sm'
+      className={resolveTextClasses(view.title?.modifier)}
+    >
+      {title}
+    </Text>
   );
 };
 
@@ -1186,6 +1216,10 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
     return (
       <SelectNode renderable={renderable} view={view} onAction={onAction} />
     );
+  }
+
+  if (layout === 'link') {
+    return renderLink(view);
   }
 
   if (ActionLayouts.has(layout)) {
