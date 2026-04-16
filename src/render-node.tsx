@@ -198,7 +198,7 @@ const renderCollection = (
               : isHorizontal
                 ? 'flex flex-nowrap gap-4 overflow-x-auto'
                 : isList
-                  ? 'flex flex-col'
+                  ? 'flex flex-col rounded-lg overflow-hidden [&_button]:rounded-none'
                   : 'flex flex-col gap-4'
           )}
           style={resolveDimensionStyle(view.modifier)}
@@ -266,17 +266,10 @@ const renderCarousel = (
         slidesPerView='auto'
         slideToClickedSlide
         coverflowEffect={{
-          rotate: 30,
+          rotate: 40,
           stretch: '10%',
           depth: 100,
-          // Function modifier: strong effect for adjacent slides (75°),
-          // clamped so outer slides never flip past ~81°
-          modifier: ((offset: number) => {
-            const value = offset * 2.5;
-            const cap = 2.7;
-            if (Math.abs(value) <= cap) return value;
-            return Math.sign(value) * cap;
-          }) as unknown as number,
+          modifier: 1,
           slideShadows: true,
         }}
         pagination={{ clickable: true }}
