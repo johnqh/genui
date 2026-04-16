@@ -666,21 +666,25 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   );
 };
 
-const renderToggle = (
-  renderable: IRenderable,
-  view: IRenderableView,
-  onAction?: GenUIActionHandler
-) => {
-  const checked = ['1', 'true', 'yes', 'on'].includes(
+const ToggleNode: React.FC<InteractiveNodeProps> = ({
+  renderable,
+  view,
+  onAction,
+}) => {
+  const initialValue = ['1', 'true', 'yes', 'on'].includes(
     (view.valueText?.text ?? '').toLowerCase()
   );
+
+  React.useEffect(() => {
+    onAction?.(initialValue ? 'true' : 'false', renderable);
+  }, []);
 
   return (
     <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
       <HStack justify='between' align='center' full>
         {titleBlock(view)}
         <Switch
-          checked={checked}
+          checked={initialValue}
           onCheckedChange={nextValue =>
             onAction?.(nextValue ? 'true' : 'false', renderable)
           }
@@ -699,6 +703,10 @@ const SliderNode: React.FC<InteractiveNodeProps> = ({
   const [value, setValue] = React.useState(
     Number.isFinite(initialValue) ? initialValue : 0
   );
+
+  React.useEffect(() => {
+    onAction?.(String(value), renderable);
+  }, []);
 
   return (
     <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
@@ -725,15 +733,21 @@ const SliderNode: React.FC<InteractiveNodeProps> = ({
   );
 };
 
-const renderSelect = (
-  renderable: IRenderable,
-  view: IRenderableView,
-  onAction?: GenUIActionHandler
-) => {
+const SelectNode: React.FC<InteractiveNodeProps> = ({
+  renderable,
+  view,
+  onAction,
+}) => {
   const options = view.children ?? [];
   const defaultValue =
     view.valueText?.text ??
     actionValueOf(options[0] ?? { id: '', destination: null, view: null });
+
+  React.useEffect(() => {
+    if (defaultValue) {
+      onAction?.(defaultValue, renderable);
+    }
+  }, []);
 
   return (
     <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
@@ -1119,7 +1133,9 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
   }
 
   if (layout === 'line_toggle') {
-    return renderToggle(renderable, view, onAction);
+    return (
+      <ToggleNode renderable={renderable} view={view} onAction={onAction} />
+    );
   }
 
   if (layout === 'line_slider') {
@@ -1129,7 +1145,9 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
   }
 
   if (layout === 'line_select') {
-    return renderSelect(renderable, view, onAction);
+    return (
+      <SelectNode renderable={renderable} view={view} onAction={onAction} />
+    );
   }
 
   if (ActionLayouts.has(layout)) {
