@@ -905,9 +905,8 @@ const renderEmbeddedImage = (
 const renderParagraph = (view: IRenderableView) => {
   const title = labelText(view.title);
   const detail = labelText(view.details);
-  const text = title || detail || view.valueText?.text || '';
 
-  if (!text) {
+  if (!title && !detail) {
     return null;
   }
 
@@ -916,19 +915,32 @@ const renderParagraph = (view: IRenderableView) => {
       className={cn('w-full', resolveViewModifierClasses(view.modifier))}
       style={resolveDimensionStyle(view.modifier)}
     >
-      <Text
-        as='div'
-        className={cn(
-          'whitespace-pre-wrap break-words',
-          resolveTextClasses(
-            view.title?.modifier ??
-              view.details?.modifier ??
-              view.valueText?.modifier
-          )
-        )}
-      >
-        {text}
-      </Text>
+      <Stack spacing='sm'>
+        {title ? (
+          <Text
+            as='div'
+            weight='semibold'
+            className={cn(
+              'break-words',
+              resolveTextClasses(view.title?.modifier)
+            )}
+          >
+            {title}
+          </Text>
+        ) : null}
+        {detail ? (
+          <Text
+            as='div'
+            color='muted'
+            className={cn(
+              'whitespace-pre-wrap break-words',
+              resolveTextClasses(view.details?.modifier)
+            )}
+          >
+            {detail}
+          </Text>
+        ) : null}
+      </Stack>
     </div>
   );
 };
