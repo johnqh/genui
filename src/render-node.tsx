@@ -917,11 +917,14 @@ const renderEmbeddedImage = (
   );
 };
 
-const renderParagraph = (view: IRenderableView) => {
+const renderParagraph = (
+  view: IRenderableView,
+  onAction?: GenUIActionHandler
+) => {
   const title = labelText(view.title);
   const detail = labelText(view.details);
 
-  if (!title && !detail) {
+  if (!title && !detail && !view.children?.length) {
     return null;
   }
 
@@ -955,19 +958,20 @@ const renderParagraph = (view: IRenderableView) => {
             {detail}
           </Text>
         ) : null}
+        {view.children?.length ? renderChildren(view.children, onAction) : null}
       </Stack>
     </div>
   );
 };
 
-const renderFooter = (view: IRenderableView) => {
+const renderFooter = (view: IRenderableView, onAction?: GenUIActionHandler) => {
   const text =
     labelText(view.title) ||
     labelText(view.details) ||
     view.valueText?.text ||
     '';
 
-  if (!text) {
+  if (!text && !view.children?.length) {
     return null;
   }
 
@@ -976,19 +980,25 @@ const renderFooter = (view: IRenderableView) => {
       className={cn('w-full', resolveViewModifierClasses(view.modifier))}
       style={resolveDimensionStyle(view.modifier)}
     >
-      <Text
-        as='div'
-        size='xs'
-        color='muted'
-        className={cn('text-center', resolveTextClasses(view.title?.modifier))}
-      >
-        {text}
-      </Text>
+      {text ? (
+        <Text
+          as='div'
+          size='xs'
+          color='muted'
+          className={cn(
+            'text-center',
+            resolveTextClasses(view.title?.modifier)
+          )}
+        >
+          {text}
+        </Text>
+      ) : null}
+      {view.children?.length ? renderChildren(view.children, onAction) : null}
     </div>
   );
 };
 
-const renderLine = (view: IRenderableView) => {
+const renderLine = (view: IRenderableView, onAction?: GenUIActionHandler) => {
   const hasImage = view.layout?.startsWith('line_image');
   const title = labelText(view.title);
   const subtitle = labelText(view.subtitle);
@@ -1043,6 +1053,7 @@ const renderLine = (view: IRenderableView) => {
             {detail}
           </Text>
         ) : null}
+        {view.children?.length ? renderChildren(view.children, onAction) : null}
       </div>
       {value ? (
         <Text
@@ -1126,15 +1137,15 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
   }
 
   if (layout === 'paragraph' || layout === 'text_markup') {
-    return renderParagraph(view);
+    return renderParagraph(view, onAction);
   }
 
   if (layout === 'footer') {
-    return renderFooter(view);
+    return renderFooter(view, onAction);
   }
 
   if (LineLayouts.has(layout)) {
-    return renderLine(view);
+    return renderLine(view, onAction);
   }
 
   if (layout === 'map_pin') {
