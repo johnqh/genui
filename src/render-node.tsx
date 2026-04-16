@@ -619,7 +619,12 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   };
 
   return (
-    <div className={cn('w-full', resolveViewModifierClasses(view.modifier))}>
+    <div
+      className={cn(
+        'w-full rounded-lg bg-gray-100 p-3 dark:bg-gray-800',
+        resolveViewModifierClasses(view.modifier)
+      )}
+    >
       <Stack spacing='sm'>
         {title ? (
           <Text
