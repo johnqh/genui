@@ -1140,6 +1140,13 @@ export const RenderNode: React.FC<RenderNodeProps> = ({
     return null;
   }
 
+  // Merge top-level children into view (handles AI misplacing children on the renderable)
+  const misplacedChildren = (renderable as unknown as Record<string, unknown>)
+    .children as IRenderable[] | undefined;
+  if (misplacedChildren?.length && !view.children?.length) {
+    view.children = misplacedChildren;
+  }
+
   const layout = view.layout ?? '';
 
   if (layout === 'spacer_horizontal' || layout === 'spacer_vertical') {
