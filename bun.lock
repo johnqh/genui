@@ -30,7 +30,7 @@
         "vitest": "^3.2.4",
       },
       "peerDependencies": {
-        "@sudobility/components": "^5.0.73",
+        "@sudobility/components": "^5.0.74",
         "@sudobility/design": "^1.1.30",
         "@sudobility/genui_types": "^0.0.2",
         "@vis.gl/react-google-maps": "^1.8.3",
