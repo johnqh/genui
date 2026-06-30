@@ -220,6 +220,9 @@ const renderCollection = (
 
 // Critical Swiper CSS injected inline so the carousel works without
 // the consuming app needing to import swiper/css separately.
+// NOTE: raw color literals below are third-party Swiper library internals
+// (3D coverflow drop-shadows + pagination bullet colors) -- decorative library
+// CSS, not themable surfaces. Intentionally left as hardcoded values.
 const SWIPER_CRITICAL_CSS = `
 .swiper{overflow:hidden;position:relative}
 .swiper-wrapper{display:flex;position:relative;width:100%;height:100%;z-index:1;transition-property:transform;box-sizing:content-box}
@@ -316,6 +319,10 @@ const FitBounds: React.FC<{
   return null;
 };
 
+// NOTE: the inline SVG/style color literals in the map-pin markers below
+// (pin fill/stroke, white callout label, drop-shadows) are decorative
+// map-marker iconography drawn directly into SVG attributes -- not Tailwind
+// className surfaces, so they stay as fixed graphic colors.
 const MapPinMarker: React.FC<{
   position: { lat: number; lng: number };
   title?: string;
@@ -558,7 +565,7 @@ const renderLink = (view: IRenderableView) => {
       target='_blank'
       rel='noopener noreferrer'
       className={cn(
-        'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline text-sm',
+        'text-primary hover:text-primary/80 underline text-sm',
         resolveViewModifierClasses(view.modifier)
       )}
     >
@@ -658,7 +665,7 @@ const InputNode: React.FC<InteractiveNodeProps> = ({
   return (
     <div
       className={cn(
-        'w-full rounded-lg bg-gray-200 p-3 dark:bg-gray-700',
+        'w-full rounded-lg bg-muted p-3',
         resolveViewModifierClasses(view.modifier)
       )}
     >
@@ -756,7 +763,7 @@ const SliderNode: React.FC<InteractiveNodeProps> = ({
             setValue(nextValue);
             onAction?.(String(nextValue), renderable);
           }}
-          className='w-full accent-blue-600'
+          className='w-full accent-primary'
         />
       </Stack>
     </div>
@@ -847,7 +854,7 @@ const renderWaiting = (view: IRenderableView) => (
       resolveViewModifierClasses(view.modifier)
     )}
   >
-    <div className='h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600' />
+    <div className='h-6 w-6 animate-spin rounded-full border-2 border-border border-t-foreground' />
     {labelText(view.title) ? (
       <Text as='div' size='sm' color='muted' className='ml-3'>
         {labelText(view.title)}
