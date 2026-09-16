@@ -22,7 +22,7 @@
     "lint": "eslint . --ext ts,tsx --ignore-pattern 'dist' --ignore-pattern 'node_modules' --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "test": "vitest",
+    "test:unit": "vitest run",
     "test:run": "vitest run",
     "prepublishOnly": "NODE_ENV=production bun run build"
   },
